@@ -24,8 +24,6 @@ type Permissions = {
 };
 
 type Users =
-  | { method: 'POST'; path: '/users/login'; body: { username: string; password: string } }
-  | { method: 'POST'; path: '/users/logout' }
   | {
       method: 'POST';
       path: '/users';
@@ -45,12 +43,12 @@ type Users =
       path: `/users/${number}`;
     }
   | {
-      method: 'GET';
+      // Permissions are changed through `/users/${number}/permissions`, not here.
+      method: 'PUT';
       path: `/users/${number}`;
       body: {
-        username: string;
-        status: 'active' | 'inactive';
-        permissions: Permissions | null;
+        username?: string;
+        status?: 'active' | 'inactive';
       };
     }
   | {
@@ -65,7 +63,8 @@ type Users =
       method: 'PUT';
       path: `/users/${number}/permissions`;
       body: {
-        permissions: Permissions;
+        // Null or missing removes all of the user's permissions.
+        permissions?: Permissions | null;
       };
     }
   | {
@@ -164,7 +163,7 @@ type Auth =
       };
     }
   | {
-      method: 'POST';
+      method: 'DELETE';
       path: '/users/logout';
     }
   | {
